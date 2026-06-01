@@ -1,0 +1,10 @@
+# build output
+build/
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# logs
+*.log
