@@ -45,7 +45,7 @@ git clone https://github.com/microsoft/vcpkg
 - Then choose, `CMake: Build`
 - Then go to build folder if already existing after `CMake:Build`
 - or `create build folder` -> `cd build` -> `cmake ..` -> `cmake --build .`
-- Note: Not sure how to build in other IDE like Visual Studio, so i leave it you guys to figure out
+  - Note: Not sure how to build in other IDE like Visual Studio, so i leave it you guys to figure out
 
 ## Run
 
