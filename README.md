@@ -13,15 +13,14 @@
 - For Windows,
   - Install VS Build Tools ( C++ Workload )
   - CMake
+  - Then install GLFW using vcpkg:
 
-Then install GLFW using vcpkg:
+    ```
+    git clone https://github.com/microsoft/vcpkg
+    .\vcpkg\bootstrap-vcpkg.bat
 
-```
-git clone https://github.com/microsoft/vcpkg
-.\vcpkg\bootstrap-vcpkg.bat
-
-.\vcpkg\vcpkg install glfw3:x64-windows
-```
+    .\vcpkg\vcpkg install glfw3:x64-windows
+    ```
 
 ## Open in VS Code or VS or any IDE you prefer
 
