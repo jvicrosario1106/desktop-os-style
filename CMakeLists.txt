@@ -26,7 +26,7 @@ target_include_directories(OSEmulator PRIVATE
     external/imgui/backends
 )
 
-target_link_libraries(OSEmulator PRIVATE glfw)
+target_link_libraries(OSEmulator PRIVATE glfw opengl32)
 
 if(APPLE)
     find_library(OpenGL_LIBRARY OpenGL)
@@ -37,3 +37,10 @@ if(APPLE)
         "-framework IOKit"
     )
 endif()
+
+# Forces to copy the resources folder to the build output directory
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources"
+    "$<TARGET_FILE_DIR:${PROJECT_NAME}>/resources"
+)
