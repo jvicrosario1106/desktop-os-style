@@ -70,8 +70,12 @@ void Taskbar::DrawActiveScreen() {
     }
 }
 
+void Taskbar::Initialize() {
+    this->show_element = true;
+}
+
 void Taskbar::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
-    if (!this->show_taskbar) {
+    if (!this->show_element) {
         return;
     }
 
@@ -98,7 +102,7 @@ void Taskbar::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
         ImGuiWindowFlags_NoSavedSettings;
     // Note: We DO NOT use NoBringToFrontOnFocus here, because we WANT the taskbar on top!
 
-    ImGui::Begin("Taskbar", &show_taskbar, taskbar_flags);
+    ImGui::Begin("Taskbar", &this->show_element, taskbar_flags);
 
     // --- TASKBAR CONTENT ---
 

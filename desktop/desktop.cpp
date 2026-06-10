@@ -1,26 +1,24 @@
 #include "desktop.h"
 
-Desktop::Desktop()
-{
+Desktop::Desktop() {
     this->background = std::make_shared<Background>();
     this->taskbar = std::make_shared<Taskbar>();
 }
 
 void Desktop::Initialize() {
-    this->background->LoadBackground("resources/MTGWallpaper.jpg");
+    this->show_element = true;
+
     this->background->offset = this->taskbar->GetHeight();
+    this->background->Initialize();
+
+    //this->taskbar->Initialize();
 }
 
-void Desktop::Draw(ImGuiViewport* viewport, GLFWwindow* window)
-{
-    if (!show_desktop) {
+void Desktop::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
+    if (!show_element) {
         return;
     }
 
-    this->background->Draw(viewport);
+    this->background->Draw(viewport, window);
     this->taskbar->Draw(viewport, window);
-}
-
-bool Desktop::GetShowDesktop() const {
-	return show_desktop;
 }

@@ -1,17 +1,19 @@
 #pragma once
 
 #include "../external/imgui/imgui.h"
+#include "imguielement.h"
 #include "powermenu.h"
 #include <memory>
 
 struct GLFWwindow;
 
-class Taskbar {
+class Taskbar : public IMGUIElement {
 public:
 	Taskbar();
 	~Taskbar() = default;
 
-	void Draw(ImGuiViewport* viewport, GLFWwindow* window);
+	void Initialize() override;
+	void Draw(ImGuiViewport* viewport, GLFWwindow* window) override;
 
 	int GetHeight() const;
 private:
@@ -26,8 +28,6 @@ private:
 	void DrawActiveScreen();
 	void DrawPlaceholderScreen(const char* title, const char* description, ActiveScreen screen);
 
-	bool show_taskbar = true;
-	//bool show_power_menu = false;
 	float height;
 	float button_paddingY = 6.0f;
 	float button_height;

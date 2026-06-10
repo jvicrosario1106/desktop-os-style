@@ -2,8 +2,9 @@
 
 #include "../external/imgui/imgui.h"
 #include "../external/imgui/backends/imgui_impl_opengl3_loader.h"
+#include "imguielement.h"
 
-class Background {
+class Background : public IMGUIElement {
 public:
 	Background();
 	~Background() = default;
@@ -11,9 +12,9 @@ public:
 	float offset;
 
 	void LoadBackground(const char* filename);
-	void Draw(ImGuiViewport* viewport);
+	void Initialize() override;
+	void Draw(ImGuiViewport* viewport, GLFWwindow* window) override;
 private:
-	bool show_background = true;
 
 	GLuint current_texture;
 	int background_width;

@@ -9,12 +9,12 @@ constexpr int GLFW_TRUE = 1;
 
 #include <cfloat>
 
-void PowerMenu::ToggleShow() {
-    this->show_power_menu = !this->show_power_menu;
+void PowerMenu::Initialize() {
+    this->show_element = false;
 }
 
 void PowerMenu::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
-    if (!this->show_power_menu) {
+    if (!this->show_element) {
         return;
     }
 
@@ -34,7 +34,7 @@ void PowerMenu::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoScrollbar;
 
-    ImGui::Begin("PowerMenu", &this->show_power_menu, menu_flags);
+    ImGui::Begin("PowerMenu", &this->show_element, menu_flags);
 
     ImGui::Text("System Options");
     ImGui::Separator();
@@ -49,12 +49,12 @@ void PowerMenu::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
     }
 
     if (ImGui::Button("Log Out", ImVec2(-FLT_MIN, 0))) {
-        show_power_menu = false; // Just closes the menu for now
+        this->show_element = false; // Just closes the menu for now
     }
 
     // Close the menu if the user clicks anywhere outside of this window
     if (!ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::IsMouseClicked(0)) {
-        show_power_menu = false;
+        this->show_element = false;
     }
 
     ImGui::End();
