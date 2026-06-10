@@ -10,6 +10,10 @@ int Taskbar::GetHeight() const {
 }
 
 void Taskbar::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
+    if (!this->show_taskbar) {
+        return;
+    }
+
     ImVec2 taskbar_pos = ImVec2(viewport->Pos.x, viewport->Pos.y + viewport->Size.y - this->height);
     ImVec2 taskbar_size = ImVec2(viewport->Size.x, this->height);
 
