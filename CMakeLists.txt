@@ -18,7 +18,7 @@ add_executable(OSEmulator
 
     external/imgui/backends/imgui_impl_glfw.cpp
     external/imgui/backends/imgui_impl_opengl3.cpp
- "desktop/desktop.h" "desktop/desktop.cpp" "desktop/background.h" "desktop/background.cpp" "desktop/taskbar.h" "desktop/taskbar.cpp" "desktop/datetimecontroller.h" "desktop/datetimecontroller.cpp" "desktop/powermenu.h" "desktop/powermenu.cpp")
+ "desktop/desktop.h" "desktop/desktop.cpp" "desktop/background.h" "desktop/background.cpp" "desktop/taskbar.h" "desktop/taskbar.cpp" "desktop/datetimecontroller.h" "desktop/datetimecontroller.cpp" "desktop/powermenu.h" "desktop/powermenu.cpp" "desktop/imguielement.h" "desktop/imguielement.cpp")
 
 target_include_directories(OSEmulator PRIVATE
     include

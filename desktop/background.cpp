@@ -16,6 +16,11 @@ void Background::LoadBackground(const char* file) {
     }
 }
 
+void Background::Initialize() {
+    this->LoadBackground("resources/MTGWallpaper.jpg");
+    this->show_element = true;
+}
+
 bool Background::LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height) {
     // Load from disk into RAM
     int image_width = 0;
@@ -49,9 +54,8 @@ bool Background::LoadTextureFromFile(const char* filename, GLuint* out_texture, 
     return true;
 }
 
-void Background::Draw(ImGuiViewport* viewport)
-{
-    if (!show_background) {
+void Background::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
+    if (!show_element) {
         return;
     }
 
@@ -73,7 +77,7 @@ void Background::Draw(ImGuiViewport* viewport)
         ImGuiWindowFlags_NoNav |
         ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-    ImGui::Begin("Desktop", &this->show_background, desktop_flags);
+    ImGui::Begin("Desktop", &this->show_element, desktop_flags);
 
     if (current_texture != 0) {
         // A. Image loaded successfully! Render the wallpaper texture

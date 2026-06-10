@@ -1,23 +1,21 @@
 #pragma once
 
 #include "../external/imgui/imgui.h"
+#include "imguielement.h"
 #include "background.h"
 #include "taskbar.h"
 #include <memory>
 
 struct GLFWwindow;
 
-class Desktop {
+class Desktop : public IMGUIElement {
 public:
 	Desktop();
 	~Desktop() = default;
 
-	void Initialize();
-	void Draw(ImGuiViewport* viewport, GLFWwindow* window);
-
-	bool GetShowDesktop() const;
+	void Initialize() override;
+	void Draw(ImGuiViewport* viewport, GLFWwindow* window) override;
 private:
-	bool show_desktop = true;
 	std::shared_ptr<Background> background;
 	std::shared_ptr<Taskbar> taskbar;
 };
