@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../external/imgui/imgui.h"
+#include "imgui.h"
 #include "imguielement.h"
 
 struct GLFWwindow;

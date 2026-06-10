@@ -11,7 +11,7 @@ void Desktop::Initialize() {
     this->background->offset = this->taskbar->GetHeight();
     this->background->Initialize();
 
-    //this->taskbar->Initialize();
+    this->taskbar->Initialize();
 }
 
 void Desktop::Draw(ImGuiViewport* viewport, GLFWwindow* window) {

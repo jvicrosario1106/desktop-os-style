@@ -7,9 +7,9 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-#include "../external/imgui/imgui.h"
-#include "../external/imgui/backends/imgui_impl_glfw.h"
-#include "../external/imgui/backends/imgui_impl_opengl3.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 //#include <sstream>
 //#include <iomanip>
 //#include <chrono>
@@ -18,7 +18,7 @@
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
 #endif
-#include "../external/imgui/backends/imgui_impl_opengl3_loader.h"
+#include "imgui_impl_opengl3_loader.h"
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
 #include "desktop.h"

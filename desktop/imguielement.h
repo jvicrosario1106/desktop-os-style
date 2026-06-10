@@ -1,8 +1,8 @@
 #pragma once
 
 #include "imgui.h"
-#include <imgui_impl_opengl3_loader.h>
-#include <GLFW/glfw3.h> 
+
+struct GLFWwindow;
 
 class IMGUIElement {
 public:
@@ -15,5 +15,5 @@ public:
 
 	bool GetShowElement() const;
 protected:
-	bool show_element;
+	bool show_element = false;
 };

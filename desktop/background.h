@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../external/imgui/imgui.h"
-#include "../external/imgui/backends/imgui_impl_opengl3_loader.h"
+#include "imgui.h"
+#include "imgui_impl_opengl3_loader.h"
 #include "imguielement.h"
 
 class Background : public IMGUIElement {

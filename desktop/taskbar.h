@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../external/imgui/imgui.h"
+#include "imgui.h"
 #include "imguielement.h"
 #include "powermenu.h"
+#include "windows.h"
 #include <memory>
 
 struct GLFWwindow;
@@ -17,21 +18,12 @@ public:
 
 	int GetHeight() const;
 private:
-	enum class ActiveScreen {
-		None,
-		Files,
-		Messages,
-		TaskManager
-	};
-
-	bool DrawIconButton(const char* label, ActiveScreen screen);
-	void DrawActiveScreen();
-	void DrawPlaceholderScreen(const char* title, const char* description, ActiveScreen screen);
+	bool DrawIconButton(const char* label, WindowType windowType);
 
 	float height;
 	float button_paddingY = 6.0f;
 	float button_height;
-	ActiveScreen active_screen = ActiveScreen::None;
 
 	std::shared_ptr<PowerMenu> power_menu;
+	std::shared_ptr<Windows> windows;
 };
