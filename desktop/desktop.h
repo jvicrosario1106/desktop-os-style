@@ -1,10 +1,11 @@
 #pragma once
 
+#include "../external/imgui/imgui.h"
 #include "background.h"
 #include "taskbar.h"
-#include <imgui_impl_opengl3_loader.h>
-#include <GLFW/glfw3.h> 
 #include <memory>
+
+struct GLFWwindow;
 
 class Desktop {
 public:

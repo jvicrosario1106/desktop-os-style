@@ -1,9 +1,7 @@
 #pragma once
 
-#include "imgui.h"
-#include "stb_image.h" 
-#include <imgui_impl_opengl3_loader.h>
-#include <GLFW/glfw3.h> 
+#include "../external/imgui/imgui.h"
+#include "../external/imgui/backends/imgui_impl_opengl3_loader.h"
 
 class Background {
 public:

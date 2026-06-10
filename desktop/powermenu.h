@@ -1,8 +1,8 @@
 #pragma once
 
-#include "imgui.h"
-#include <imgui_impl_opengl3_loader.h>
-#include <GLFW/glfw3.h> 
+#include "../external/imgui/imgui.h"
+
+struct GLFWwindow;
 
 class PowerMenu {
 public:

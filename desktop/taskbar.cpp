@@ -1,5 +1,13 @@
 #include "taskbar.h"
 
+#include "datetimecontroller.h"
+#include <string>
+
+namespace {
+constexpr float AppButtonWidth = 118.0f;
+constexpr float ButtonSpacing = 8.0f;
+}
+
 Taskbar::Taskbar() : height(50.0f) {
     this->button_height = this->height - this->button_paddingY;
     this->power_menu = std::make_shared<PowerMenu>();
@@ -9,10 +17,65 @@ int Taskbar::GetHeight() const {
 	return this->height;
 }
 
+bool Taskbar::DrawIconButton(const char* label, ActiveScreen screen) {
+    const bool isActive = this->active_screen == screen;
+
+    if (isActive) {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.18f, 0.36f, 0.68f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.24f, 0.44f, 0.78f, 1.0f));
+    }
+
+    const bool wasClicked = ImGui::Button(label, ImVec2(AppButtonWidth, this->button_height));
+
+    if (isActive) {
+        ImGui::PopStyleColor(2);
+    }
+
+    if (wasClicked) {
+        this->active_screen = screen;
+    }
+
+    return wasClicked;
+}
+
+void Taskbar::DrawPlaceholderScreen(const char* title, const char* description, ActiveScreen screen) {
+    bool isOpen = true;
+
+    ImGui::SetNextWindowSize(ImVec2(420.0f, 220.0f), ImGuiCond_FirstUseEver);
+    if (ImGui::Begin(title, &isOpen)) {
+        ImGui::TextWrapped("%s", description);
+        ImGui::Separator();
+        ImGui::TextDisabled("Placeholder information for this screen.");
+    }
+    ImGui::End();
+
+    if (!isOpen && this->active_screen == screen) {
+        this->active_screen = ActiveScreen::None;
+    }
+}
+
+void Taskbar::DrawActiveScreen() {
+    switch (this->active_screen) {
+    case ActiveScreen::Files:
+        DrawPlaceholderScreen("Files", "Browse local folders and recent documents here.", ActiveScreen::Files);
+        break;
+    case ActiveScreen::Messages:
+        DrawPlaceholderScreen("Messages", "View system notifications and sample messages here.", ActiveScreen::Messages);
+        break;
+    case ActiveScreen::TaskManager:
+        DrawPlaceholderScreen("Task Manager", "Task Manager will show process, CPU, and memory data in Component 3.", ActiveScreen::TaskManager);
+        break;
+    case ActiveScreen::None:
+        break;
+    }
+}
+
 void Taskbar::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
     if (!this->show_taskbar) {
         return;
     }
+
+    this->DrawActiveScreen();
 
     ImVec2 taskbar_pos = ImVec2(viewport->Pos.x, viewport->Pos.y + viewport->Size.y - this->height);
     ImVec2 taskbar_size = ImVec2(viewport->Size.x, this->height);
@@ -53,6 +116,15 @@ void Taskbar::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
     }
 
     ImVec2 start_button_pos = ImGui::GetItemRectMin();
+
+    ImGui::SameLine(0.0f, ButtonSpacing);
+    this->DrawIconButton("[F] Files", ActiveScreen::Files);
+
+    ImGui::SameLine(0.0f, ButtonSpacing);
+    this->DrawIconButton("[M] Messages", ActiveScreen::Messages);
+
+    ImGui::SameLine(0.0f, ButtonSpacing);
+    this->DrawIconButton("[T] Task Manager", ActiveScreen::TaskManager);
 
     // Right-align the clock text
     std::string clock_str = DateTimeController::GetCurrentTimeString();

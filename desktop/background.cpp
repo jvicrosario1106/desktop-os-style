@@ -1,5 +1,8 @@
 #include "background.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 Background::Background() : offset(0.0f), current_texture(0), background_width(0), background_height(0) {
 
 }

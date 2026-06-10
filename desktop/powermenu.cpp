@@ -1,5 +1,14 @@
 #include "powermenu.h"
 
+#if __has_include(<GLFW/glfw3.h>)
+#include <GLFW/glfw3.h>
+#else
+extern "C" void glfwSetWindowShouldClose(GLFWwindow* window, int value);
+constexpr int GLFW_TRUE = 1;
+#endif
+
+#include <cfloat>
+
 void PowerMenu::ToggleShow() {
     this->show_power_menu = !this->show_power_menu;
 }
