@@ -18,7 +18,7 @@ add_executable(OSEmulator
 
     external/imgui/backends/imgui_impl_glfw.cpp
     external/imgui/backends/imgui_impl_opengl3.cpp
-)
+ "desktop/desktop.h" "desktop/desktop.cpp" "desktop/background.h" "desktop/background.cpp" "desktop/taskbar.h" "desktop/taskbar.cpp" "desktop/datetimecontroller.h" "desktop/datetimecontroller.cpp" "desktop/powermenu.h" "desktop/powermenu.cpp")
 
 target_include_directories(OSEmulator PRIVATE
     include
@@ -43,4 +43,10 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_CURRENT_SOURCE_DIR}/resources"
     "$<TARGET_FILE_DIR:${PROJECT_NAME}>/resources"
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/desktop
+    # ... keep any other existing include directories here, like imgui ...
 )

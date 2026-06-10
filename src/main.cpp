@@ -11,9 +11,9 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <string>
-#include <sstream>
-#include <iomanip>
-#include <chrono>
+//#include <sstream>
+//#include <iomanip>
+//#include <chrono>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <stdio.h>
@@ -23,6 +23,8 @@
 #endif
 #include <imgui_impl_opengl3_loader.h>
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
+
+#include "desktop.h"
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -40,84 +42,6 @@
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
-}
-
-bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
-{
-    // Load from disk into RAM
-    int image_width = 0;
-    int image_height = 0;
-    unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
-    if (image_data == NULL)
-        return false;
-
-    // Create a OpenGL texture identifier
-    GLuint image_texture;
-    glGenTextures(1, &image_texture);
-    glBindTexture(GL_TEXTURE_2D, image_texture);
-
-    // Setup filtering parameters for display
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    // Upload pixels to graphics card
-#if defined(GL_UNPACK_ROW_LENGTH) && !defined(__EMSCRIPTEN__)
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-#endif
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
-    stbi_image_free(image_data);
-
-    *out_texture = image_texture;
-    *out_width = image_width;
-    *out_height = image_height;
-
-    return true;
-}
-
-std::string GetCurrentTimeString() {
-    // Get current time point from system clock
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-
-    // Convert to local time structure
-    std::tm local_time;
-#if defined(_MSC_VER)
-    localtime_s(&local_time, &now_time); // Windows safe version
-#else
-    localtime_r(&now_time, &local_time); // POSIX/Linux safe version
-#endif
-
-    // Format string to HH:MM:SS (e.g., 14:30:05)
-    std::stringstream ss;
-    ss << std::setfill('0')
-        << std::setw(2) << local_time.tm_hour << ":"
-        << std::setw(2) << local_time.tm_min << ":"
-        << std::setw(2) << local_time.tm_sec;
-
-    return ss.str();
-}
-
-std::string GetCurrentDateString() {
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-
-    std::tm local_time;
-#if defined(_MSC_VER)
-    localtime_s(&local_time, &now_time);
-#else
-    localtime_r(&now_time, &local_time);
-#endif
-
-    // Format string to MM/DD/YYYY (e.g., 06/08/2026)
-    std::stringstream ss;
-    ss << std::setfill('0')
-        << std::setw(2) << (local_time.tm_mon + 1) << "/"
-        << std::setw(2) << local_time.tm_mday << "/"
-        << (local_time.tm_year + 1900);
-
-    return ss.str();
 }
 
 // Main code
@@ -158,7 +82,7 @@ int main(int, char**)
 
     // Create window with graphics context
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()); // Valid on GLFW 3.3+ only
-    GLFWwindow* window = glfwCreateWindow((int)(1280 * main_scale), (int)(800 * main_scale), "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow((int)(1280 * main_scale), (int)(800 * main_scale), "CSC511C Desktop Emulator", nullptr, nullptr);
     if (window == nullptr)
         return 1;
     glfwMakeContextCurrent(window);
@@ -207,28 +131,12 @@ int main(int, char**)
     //IM_ASSERT(font != nullptr);
 
     // Our state
-    bool show_demo_window = true;
-    bool show_another_window = false;
-    bool show_desktop = true;
     bool show_taskbar = true;
     bool show_power_menu = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    GLuint desktop_texture = 0;
-    int image_width = 0;
-    int image_height = 0;
-
-    // 1. Define the taskbar size
-    float taskbar_height = 50.0f;
-    float button_paddingY = 6.0f;
-    float button_height = taskbar_height - button_paddingY;
-
-    bool ret = LoadTextureFromFile("resources/MTGWallpaper.jpg", &desktop_texture, &image_width, &image_height);
-    IM_ASSERT(ret);
-    if (!ret) {
-        // TODO: Put a default color here instead
-        
-    }
+    std::shared_ptr<Desktop> desktop = std::make_shared<Desktop>();
+    desktop->Initialize();
 
     // Main loop
 #ifdef __EMSCRIPTEN__
@@ -257,161 +165,10 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // --- DESKTOP BACKGROUND CONTENT ---
-
+        // --- DESKTOP ---
+        
         ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->WorkPos);
-        ImVec2 wallpaper_size = ImVec2(viewport->WorkSize.x, viewport->WorkSize.y - taskbar_height);
-        ImGui::SetNextWindowSize(wallpaper_size);
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
-        ImGuiWindowFlags desktop_flags = ImGuiWindowFlags_NoTitleBar |
-            ImGuiWindowFlags_NoResize |
-            ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoScrollbar |
-            ImGuiWindowFlags_NoScrollWithMouse |
-            ImGuiWindowFlags_NoCollapse |
-            ImGuiWindowFlags_NoNav |
-            ImGuiWindowFlags_NoBringToFrontOnFocus;
-
-        ImGui::Begin("Desktop", &show_desktop, desktop_flags);
-
-        if (desktop_texture != 0)
-        {
-            // A. Image loaded successfully! Render the wallpaper texture
-            ImTextureID tex_id = (ImTextureID)(intptr_t)desktop_texture;
-            ImGui::Image(tex_id, wallpaper_size, ImVec2(0, 0), ImVec2(1, 1));
-        }
-        else
-        {
-            // B. Fallback: Draw a solid background color if the image wasn't found
-            ImDrawList* draw_list = ImGui::GetWindowDrawList();
-            ImVec2 min_pos = viewport->WorkPos;
-            ImVec2 max_pos = ImVec2(min_pos.x + viewport->WorkSize.x, min_pos.y + viewport->WorkSize.y);
-            draw_list->AddRectFilled(min_pos, max_pos, IM_COL32(34, 112, 147, 255));
-        }
-
-        ImGui::End();
-        ImGui::PopStyleVar(3);
-      
-        // --- TASKBAR ---
-
-        ImVec2 taskbar_pos = ImVec2(viewport->Pos.x, viewport->Pos.y + viewport->Size.y - taskbar_height);
-        ImVec2 taskbar_size = ImVec2(viewport->Size.x, taskbar_height);
-
-        ImGui::SetNextWindowPos(taskbar_pos);
-        ImGui::SetNextWindowSize(taskbar_size);
-
-        // 2. Style variations for a flat, modern taskbar
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        // Optional: Pushes a dark background color specifically for the taskbar
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.10f, 0.10f, 0.12f, 1.0f));
-
-        // 3. Flags to make it a sticky bar that stays on top
-        ImGuiWindowFlags taskbar_flags = ImGuiWindowFlags_NoTitleBar |
-            ImGuiWindowFlags_NoResize |
-            ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoScrollbar |
-            ImGuiWindowFlags_NoCollapse |
-            ImGuiWindowFlags_NoSavedSettings;
-        // Note: We DO NOT use NoBringToFrontOnFocus here, because we WANT the taskbar on top!
-
-        ImGui::Begin("Taskbar", &show_taskbar, taskbar_flags);
-
-        // --- TASKBAR CONTENT ---
-
-        ImGui::SetCursorPosY((taskbar_height - button_height) * 0.5f);
-
-        // Center the button vertically inside the taskbar
-        ImGui::SetCursorPosY((taskbar_height - button_height) * 0.5f);
-
-        // Define the full button dimensions (Width: 70px, Height: calculated dynamically)
-        ImVec2 start_button_size = ImVec2(70.0f, button_height);
-
-        if (ImGui::Button("Start", start_button_size)) {
-            // Pop up power menu
-            show_power_menu = !show_power_menu;
-        }
-
-        ImVec2 start_button_pos = ImGui::GetItemRectMin();
-
-        // Right-align the clock text
-        std::string clock_str = GetCurrentTimeString();
-        std::string date_str = GetCurrentDateString();
-
-        float clock_width = ImGui::CalcTextSize(clock_str.c_str()).x;
-        float date_width = ImGui::CalcTextSize(date_str.c_str()).x;
-        float largest_width = (clock_width > date_width) ? clock_width : date_width;
-
-        // Move the cursor to the right side of the taskbar, minus a small margin
-        ImGui::SameLine(ImGui::GetWindowWidth() - largest_width - 15.0f);
-
-        // Center the text vertically within the 40px bar
-        float stack_height = ImGui::GetTextLineHeightWithSpacing() * 2.0f;
-        ImGui::SetCursorPosY((taskbar_height - stack_height) * 0.5f);
-
-        ImGui::BeginGroup();
-        // Print the updating clock text
-        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (largest_width - clock_width) * 0.5f);
-        ImGui::Text("%s", clock_str.c_str());
-
-        // Print the date
-        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (largest_width - date_width) * 0.5f);
-        ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "%s", date_str.c_str());
-        ImGui::EndGroup();
-
-        ImGui::End();
-        ImGui::PopStyleColor(1);
-        ImGui::PopStyleVar(2);
-
-        // --- POWER MENU CONTENT ---
-
-        if (show_power_menu) {
-            // Define the size of your small popout menu
-            ImVec2 menu_size = ImVec2(150.0f, 100.0f);
-
-            // Position it directly above the Start button
-            ImVec2 menu_pos = ImVec2(start_button_pos.x, start_button_pos.y - menu_size.y - 2.0f); // 2px gap
-
-            ImGui::SetNextWindowPos(menu_pos);
-            ImGui::SetNextWindowSize(menu_size);
-
-            // Add flags to make it look like a clean context menu panel
-            ImGuiWindowFlags menu_flags = ImGuiWindowFlags_NoTitleBar |
-                ImGuiWindowFlags_NoResize |
-                ImGuiWindowFlags_NoMove |
-                ImGuiWindowFlags_NoCollapse |
-                ImGuiWindowFlags_NoScrollbar;
-
-            ImGui::Begin("PowerMenu", &show_power_menu, menu_flags);
-
-            ImGui::Text("System Options");
-            ImGui::Separator();
-
-            // Add a bit of spacing
-            ImGui::Spacing();
-
-            // THE POWER BUTTON: Closes the GLFW window application gracefully
-            if (ImGui::Button("Shut Down", ImVec2(-FLT_MIN, 0))) {
-                // 'window' is the GLFWwindow pointer initialized at the top of main.cpp
-                glfwSetWindowShouldClose(window, GLFW_TRUE);
-            }
-
-            if (ImGui::Button("Log Out", ImVec2(-FLT_MIN, 0))) {
-                show_power_menu = false; // Just closes the menu for now
-            }
-
-            // Close the menu if the user clicks anywhere outside of this window
-            if (!ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::IsMouseClicked(0)) {
-                show_power_menu = false;
-            }
-
-            ImGui::End();
-        }
+        desktop->Draw(viewport, window);
 
         // Rendering
         ImGui::Render();
