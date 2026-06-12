@@ -3,7 +3,7 @@
 #include "imgui.h"
 #include "imguielement.h"
 #include "powermenu.h"
-#include "windows.h"
+#include "desktopwindows.h"
 #include <memory>
 
 struct GLFWwindow;
@@ -25,5 +25,5 @@ private:
 	float button_height;
 
 	std::shared_ptr<PowerMenu> power_menu;
-	std::shared_ptr<Windows> windows;
+	std::shared_ptr<DesktopWindows> windows;
 };

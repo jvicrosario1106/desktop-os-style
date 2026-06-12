@@ -1,6 +1,8 @@
 #pragma once
 
 #include "imguielement.h"
+#include "taskmanager.h"
+#include <memory>
 
 enum class WindowType {
     None,
@@ -9,10 +11,10 @@ enum class WindowType {
     TaskManager
 };
 
-class Windows : public IMGUIElement {
+class DesktopWindows : public IMGUIElement {
 public:
-    Windows() = default;
-    ~Windows() = default;
+    DesktopWindows() = default;
+    ~DesktopWindows() = default;
 
     void Initialize() override;
     void Draw(ImGuiViewport* viewport, GLFWwindow* window) override;
@@ -28,4 +30,6 @@ private:
     bool showFiles = false;
     bool showMessages = false;
     bool showTaskManager = false;
+
+    std::shared_ptr<TaskManager> taskManager;
 };

@@ -1,22 +1,26 @@
-#include "windows.h"
+#include "desktopwindows.h"
+#include <memory>
 
-void Windows::Initialize() {
+void DesktopWindows::Initialize() {
     this->show_element = true;
+    this->taskManager = std::make_shared<TaskManager>();
+    this->taskManager->Initialize();
+    this->taskManager->SetOpenState(&this->showTaskManager);
 }
 
-void Windows::Open(WindowType windowType) {
+void DesktopWindows::Open(WindowType windowType) {
     bool* windowState = GetWindowState(windowType);
     if (windowState != nullptr) {
         *windowState = true;
     }
 }
 
-bool Windows::IsActive(WindowType windowType) const {
+bool DesktopWindows::IsActive(WindowType windowType) const {
     const bool* windowState = GetWindowState(windowType);
     return windowState != nullptr && *windowState;
 }
 
-void Windows::DrawPlaceholderWindow(const char* title, const char* description, WindowType windowType) {
+void DesktopWindows::DrawPlaceholderWindow(const char* title, const char* description, WindowType windowType) {
     bool* isOpen = GetWindowState(windowType);
     if (isOpen == nullptr || !*isOpen) {
         return;
@@ -31,7 +35,7 @@ void Windows::DrawPlaceholderWindow(const char* title, const char* description, 
     ImGui::End();
 }
 
-void Windows::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
+void DesktopWindows::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
     (void)viewport;
     (void)window;
 
@@ -41,10 +45,14 @@ void Windows::Draw(ImGuiViewport* viewport, GLFWwindow* window) {
 
     DrawPlaceholderWindow("Files", "Browse local folders and recent documents here.", WindowType::Files);
     DrawPlaceholderWindow("Messages", "View system notifications and sample messages here.", WindowType::Messages);
-    DrawPlaceholderWindow("Task Manager", "Task Manager will show process, CPU, and memory data in Component 3.", WindowType::TaskManager);
+
+    // Draw Task Manager with real content
+    if (this->showTaskManager && this->taskManager) {
+        this->taskManager->Draw(viewport, window);
+    }
 }
 
-bool* Windows::GetWindowState(WindowType windowType) {
+bool* DesktopWindows::GetWindowState(WindowType windowType) {
     switch (windowType) {
     case WindowType::Files:
         return &this->showFiles;
@@ -59,6 +67,6 @@ bool* Windows::GetWindowState(WindowType windowType) {
     return nullptr;
 }
 
-const bool* Windows::GetWindowState(WindowType windowType) const {
-    return const_cast<Windows*>(this)->GetWindowState(windowType);
+const bool* DesktopWindows::GetWindowState(WindowType windowType) const {
+    return const_cast<DesktopWindows*>(this)->GetWindowState(windowType);
 }

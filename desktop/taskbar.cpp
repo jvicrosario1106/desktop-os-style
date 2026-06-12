@@ -11,7 +11,7 @@ Taskbar::Taskbar() : height(50.0f) {
     this->button_height = this->height - this->button_paddingY;
     this->power_menu = std::make_shared<PowerMenu>();
     this->power_menu->Initialize();
-    this->windows = std::make_shared<Windows>();
+    this->windows = std::make_shared<DesktopWindows>();
     this->windows->Initialize();
 }
 
